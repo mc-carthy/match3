@@ -13,8 +13,9 @@ public class Piece : MonoBehaviour {
 		Color.magenta
 	};
 	private int index;
-	private Vector2 coords;
 	private bool isDestroyed;
+
+	public Vector2 coords;
 
 	private void Start () {
 		index = Random.Range (0, colors.Length);
