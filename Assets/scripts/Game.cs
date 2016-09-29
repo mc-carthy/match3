@@ -17,6 +17,9 @@ public class Game : MonoBehaviour {
 	private bool isGameOver;
 	private Piece[,] board;
 	private Piece selectedPiece;
+	private float ySpawnPos = 6;
+	private float newPieceDelay = 0.15f;
+
 	private float selectedPieceScaleFactor = 1.2f;
 	private float selectedPieceScaleTime = 0.3f;
 	private float swapPieceTime = 0.5f;
@@ -214,6 +217,40 @@ public class Game : MonoBehaviour {
 	}
 
 	private void AddPieces () {
+		int firstY = -1;
 
+		for (int y = 0; y < boardHeight; y++) {
+			for (int x = 0; x < boardWidth; x++) {
+				if (board [x, y].isDestroyed) {
+
+					if (firstY = -1) {
+						firstY = y;
+
+						Piece oldPiece = board [x, y];
+						GameObject pieceObject = Instantiate (piecePrefab);
+						pieceObject.transform.SetParent (levelContainer);
+						pieceObject.transform.localPosition = new Vector3 (
+							oldPiece.transform.position.x,
+							ySpawnPos,
+							0
+						);
+
+						iTween.MoveTo (pieceObject, iTween.Hash (
+							"position", oldPiece.transform.localPosition,
+							"isLocal", true,
+							"time", swapPieceTime,
+							"delay", newPieceDelay * (y - firstY)
+						));
+
+						Piece piece = pieceObject.GetComponent<Piece> ();
+						piece.coords = oldPiece.coords;
+						board [x, y] = piece;
+
+						Destroy (oldPiece.gameObject);
+					}
+
+				}
+			}
+		}
 	}
 }
