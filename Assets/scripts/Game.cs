@@ -18,6 +18,7 @@ public class Game : MonoBehaviour {
 	private Piece selectedPiece;
 	private float selectedPieceScaleFactor = 1.2f;
 	private float selectedPieceScaleTime = 0.3f;
+	private float swapPieceTime = 0.5f;
 
 	private void Start () {
 		mainCam = Camera.main;
@@ -73,7 +74,7 @@ public class Game : MonoBehaviour {
 								"time", selectedPieceScaleTime
 							));
 						} else if (hitPiece.IsNeighbour (selectedPiece)) {
-							// Swap pieces
+							AttemptMatch (selectedPiece, hitPiece);
 						}
 
 						selectedPiece = null;
@@ -81,5 +82,42 @@ public class Game : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	private void AttemptMatch (Piece piece0, Piece piece1) {
+		StartCoroutine(AttemptMatchRoutine (piece0, piece1));
+	}
+
+	private IEnumerator AttemptMatchRoutine (Piece piece0, Piece piece1) {
+		iTween.Stop (piece0.gameObject);
+		iTween.Stop (piece1.gameObject);
+
+		piece0.transform.localScale = Vector3.one;
+		piece1.transform.localScale = Vector3.one;
+
+		Vector2 coords0 = piece0.coords;
+		Vector2 coords1 = piece1.coords;
+
+		Vector3 pos0 = piece0.transform.position;
+		Vector3 pos1 = piece1.transform.position;
+
+		iTween.MoveTo (piece0.gameObject, iTween.Hash (
+			"position", pos1,
+			"isLocal", true,
+			"time", swapPieceTime
+		));		
+		iTween.MoveTo (piece1.gameObject, iTween.Hash (
+			"position", pos0,
+			"isLocal", true,
+			"time", swapPieceTime
+		));
+
+		piece0.coords = coords1;
+		piece1.coords = coords0;
+
+		board [(int)piece0.coords.x, (int)piece0.coords.y] = piece0;
+		board [(int)piece1.coords.x, (int)piece1.coords.y] = piece1;
+
+		yield return new WaitForSeconds (swapPieceTime);
 	}
 }
