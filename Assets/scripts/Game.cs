@@ -204,6 +204,14 @@ public class Game : MonoBehaviour {
 			x++;
 		}
 
+		if (matchingNeighbours.Count >= 3) {
+			return matchingNeighbours;
+		}
+		x = (int)piece.coords.x;
+		y = 0;
+		isReachedPiece = false;
+		matchingNeighbours.Clear ();
+
 		while (y < boardHeight) {
 			if (!board [x, y].isDestroyed && board [x, y].index == piece.index) {
 				matchingNeighbours.Add (board [x, y]);
