@@ -182,7 +182,35 @@ public class Game : MonoBehaviour {
 	}
 
 	private void DropPieces () {
+		for (int y = 0; y < boardHeight; y++) {
+			for (int x = 0; x < boardWidth; x++) {
+				if (board [x, y].isDestroyed) {
+					bool isDropped = false;
 
+					for (int j = y + 1; j < boardHeight && !isDropped; j++) {
+						Vector2 coord0 = board [x, y].coords;
+						Vector2 coord1 = board [x, j].coords;
+
+						board [x, y].coords = coord1;
+						board [x, j].coords = coord0;
+
+						iTween.MoveTo (board [x, j].gameObject, iTween.Hash (
+							"position", board[x, y].transform.position,
+							"isLocal", true,
+							"time", swapPieceTime
+						));
+
+						board [x, y].transform.localPosition = board [x, j].transform.localPosition;
+
+						Piece fallingPiece = board [x, j];
+						board [x, j] = board [x, y];
+						board [x, y] = fallingPiece;
+
+						isDropped = true;
+					}
+				}
+			}
+		}
 	}
 
 	private void AddPieces () {
