@@ -21,4 +21,11 @@ public class Piece : MonoBehaviour {
 		ren = GetComponent<Renderer> ();
 		ren.material.SetColor ("_Color", colors [index]);
 	}
+
+	private bool IsNeighbour (Piece otherPiece) {
+		int hDist = Mathf.Abs((int)(coords.x - otherPiece.coords.x));
+		int vDist = Mathf.Abs((int)(coords.y - otherPiece.coords.y));
+		int totalDist = hDist + vDist;
+		return (totalDist == 1);
+	}
 }
