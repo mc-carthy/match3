@@ -165,7 +165,7 @@ public class Game : MonoBehaviour {
 					"time", destroyPieceTime
 				));
 			}
-			return new WaitForSeconds (destroyPieceTime);
+			yield return new WaitForSeconds (destroyPieceTime);
 
 			DropPieces ();
 			AddPieces ();
@@ -184,7 +184,7 @@ public class Game : MonoBehaviour {
 		bool isReachedPiece = false;
 
 		while (x < boardWidth) {
-			if (board [x, y].isDestroyed && board [x, y].index == piece.index) {
+			if (!board [x, y].isDestroyed && board [x, y].index == piece.index) {
 				matchingNeighbours.Add (board [x, y]);
 
 				if (board [x, y] == piece) {
@@ -203,6 +203,29 @@ public class Game : MonoBehaviour {
 
 			x++;
 		}
+
+		while (y < boardHeight) {
+			if (!board [x, y].isDestroyed && board [x, y].index == piece.index) {
+				matchingNeighbours.Add (board [x, y]);
+
+				if (board [x, y] == piece) {
+					isReachedPiece = true;
+				}
+
+			} else {
+				if (!isReachedPiece) {
+					matchingNeighbours.Clear ();
+				} else if (matchingNeighbours.Count >= 3) {
+					return matchingNeighbours;
+				} else {
+					matchingNeighbours.Clear ();
+				}
+			}
+
+			y++;
+		}
+
+		return matchingNeighbours;
 	}
 
 	private void CheckGameOver () {
@@ -248,7 +271,7 @@ public class Game : MonoBehaviour {
 			for (int x = 0; x < boardWidth; x++) {
 				if (board [x, y].isDestroyed) {
 
-					if (firstY = -1) {
+					if (firstY == -1) {
 						firstY = y;
 
 						Piece oldPiece = board [x, y];
