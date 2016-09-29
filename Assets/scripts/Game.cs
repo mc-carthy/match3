@@ -22,6 +22,10 @@ public class Game : MonoBehaviour {
 		BuildBoard ();
 	}
 
+	private void Update () {
+		GetInput ();
+	}
+
 	private void BuildBoard () {
 		board = new Piece[boardWidth, boardHeight];
 
@@ -39,6 +43,17 @@ public class Game : MonoBehaviour {
 				piece.coords = new Vector2 (x, y);
 
 				board [x, y] = piece;
+			}
+		}
+	}
+
+	private void GetInput () {
+		if (Input.GetMouseButtonDown (0)) {
+			RaycastHit hit;
+			Ray ray = mainCam.ScreenPointToRay (Input.mousePosition);
+
+			if (Physics.Raycast (ray, out hit, 100)) {
+				Debug.Log (hit.collider.name);
 			}
 		}
 	}
