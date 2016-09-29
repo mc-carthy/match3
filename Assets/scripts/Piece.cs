@@ -23,7 +23,7 @@ public class Piece : MonoBehaviour {
 		ren.material.SetColor ("_Color", colors [index]);
 	}
 
-	private bool IsNeighbour (Piece otherPiece) {
+	public bool IsNeighbour (Piece otherPiece) {
 		int hDist = Mathf.Abs((int)(coords.x - otherPiece.coords.x));
 		int vDist = Mathf.Abs((int)(coords.y - otherPiece.coords.y));
 		int totalDist = hDist + vDist;

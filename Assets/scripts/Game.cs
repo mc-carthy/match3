@@ -16,6 +16,8 @@ public class Game : MonoBehaviour {
 	private bool isGameOver;
 	private Piece[,] board;
 	private Piece selectedPiece;
+	private float selectedPieceScaleFactor = 1.2f;
+	private float selectedPieceScaleTime = 0.3f;
 
 	private void Start () {
 		mainCam = Camera.main;
@@ -53,7 +55,30 @@ public class Game : MonoBehaviour {
 			Ray ray = mainCam.ScreenPointToRay (Input.mousePosition);
 
 			if (Physics.Raycast (ray, out hit, 100)) {
-				Debug.Log (hit.collider.name);
+				if (hit.collider.tag == "piece") {
+					Piece hitPiece = hit.collider.gameObject.GetComponent<Piece>();
+
+					if (selectedPiece == null) {
+						selectedPiece = hitPiece;
+						iTween.ScaleTo (selectedPiece.gameObject, iTween.Hash (
+							"scale", Vector3.one * selectedPieceScaleFactor,
+							"isLocal", true,
+							"time", selectedPieceScaleTime
+						));
+					} else {
+						if (hitPiece == selectedPiece || hitPiece.IsNeighbour (selectedPiece) == false) {
+							iTween.ScaleTo (selectedPiece.gameObject, iTween.Hash (
+								"scale", Vector3.one,
+								"isLocal", true,
+								"time", selectedPieceScaleTime
+							));
+						} else if (hitPiece.IsNeighbour (selectedPiece)) {
+							// Swap pieces
+						}
+
+						selectedPiece = null;
+					}
+				}
 			}
 		}
 	}
