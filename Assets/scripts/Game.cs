@@ -176,8 +176,33 @@ public class Game : MonoBehaviour {
 		}
 	}
 
-	private void CheckMatch (Piece piece) {
+	private List<Piece> CheckMatch (Piece piece) {
+		List<Piece> matchingNeighbours = new List<Piece> ();
 
+		int x = 0;
+		int y = (int)piece.coords.y;
+		bool isReachedPiece = false;
+
+		while (x < boardWidth) {
+			if (board [x, y].isDestroyed && board [x, y].index == piece.index) {
+				matchingNeighbours.Add (board [x, y]);
+
+				if (board [x, y] == piece) {
+					isReachedPiece = true;
+				}
+
+			} else {
+				if (!isReachedPiece) {
+					matchingNeighbours.Clear ();
+				} else if (matchingNeighbours.Count >= 3) {
+					return matchingNeighbours;
+				} else {
+					matchingNeighbours.Clear ();
+				}
+			}
+
+			x++;
+		}
 	}
 
 	private void CheckGameOver () {
@@ -248,7 +273,6 @@ public class Game : MonoBehaviour {
 
 						Destroy (oldPiece.gameObject);
 					}
-
 				}
 			}
 		}

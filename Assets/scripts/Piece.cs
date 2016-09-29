@@ -12,8 +12,8 @@ public class Piece : MonoBehaviour {
 		Color.yellow,
 		Color.magenta
 	};
-	private int index;
 
+	public int index;
 	public bool isDestroyed;
 	public Vector2 coords;
 
