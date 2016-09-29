@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Game : MonoBehaviour {
 
@@ -19,6 +20,8 @@ public class Game : MonoBehaviour {
 	private float selectedPieceScaleFactor = 1.2f;
 	private float selectedPieceScaleTime = 0.3f;
 	private float swapPieceTime = 0.5f;
+	private float checkGameOverTime = 1;
+	private float destroyPieceTime = 0.25f;
 
 	private void Start () {
 		mainCam = Camera.main;
@@ -119,5 +122,70 @@ public class Game : MonoBehaviour {
 		board [(int)piece1.coords.x, (int)piece1.coords.y] = piece1;
 
 		yield return new WaitForSeconds (swapPieceTime);
+
+		List<Piece> matchingPieces = CheckMatch (piece0);
+		if (matchingPieces.Count == 0) {
+			matchingPieces = CheckMatch (piece1);
+		}
+
+		if (matchingPieces.Count < 3) {
+			iTween.MoveTo (piece0.gameObject, iTween.Hash (
+				"position", pos0,
+				"isLocal", true,
+				"time", swapPieceTime
+			));		
+			iTween.MoveTo (piece1.gameObject, iTween.Hash (
+				"position", pos1,
+				"isLocal", true,
+				"time", swapPieceTime
+			));
+
+			piece0.coords = coords0;
+			piece1.coords = coords1;
+
+			board [(int)piece0.coords.x, (int)piece0.coords.y] = piece0;
+			board [(int)piece1.coords.x, (int)piece1.coords.y] = piece1;
+
+			yield return new WaitForSeconds (checkGameOverTime);
+
+			CheckGameOver ();
+
+		} else {
+			foreach (Piece piece in matchingPieces) {
+				piece.isDestroyed = true;
+
+				score += 100;
+
+				iTween.ScaleTo (piece.gameObject, iTween.Hash (
+					"scale", Vector3.zero,
+					"isLocal", true,
+					"time", destroyPieceTime
+				));
+			}
+			return new WaitForSeconds (destroyPieceTime);
+
+			DropPieces ();
+			AddPieces ();
+
+			yield return new WaitForSeconds (checkGameOverTime);
+
+			CheckGameOver ();
+		}
+	}
+
+	private void CheckMatch (Piece piece) {
+
+	}
+
+	private void CheckGameOver () {
+
+	}
+
+	private void DropPieces () {
+
+	}
+
+	private void AddPieces () {
+
 	}
 }

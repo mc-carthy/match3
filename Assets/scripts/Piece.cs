@@ -13,8 +13,8 @@ public class Piece : MonoBehaviour {
 		Color.magenta
 	};
 	private int index;
-	private bool isDestroyed;
 
+	public bool isDestroyed;
 	public Vector2 coords;
 
 	private void Start () {
