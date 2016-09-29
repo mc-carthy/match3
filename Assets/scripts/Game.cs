@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -8,6 +10,8 @@ public class Game : MonoBehaviour {
 	private Transform levelContainer;
 	[SerializeField]
 	private GameObject piecePrefab;
+	[SerializeField]
+	private Text scoreText;
 	private Camera mainCam;
 	private int boardWidth = 6;
 	private int boardHeight = 5;
@@ -33,6 +37,7 @@ public class Game : MonoBehaviour {
 
 	private void Update () {
 		GetInput ();
+		ListenForRestart ();
 	}
 
 	private void BuildBoard () {
@@ -165,6 +170,9 @@ public class Game : MonoBehaviour {
 					"time", destroyPieceTime
 				));
 			}
+
+			UpdateScore ();
+
 			yield return new WaitForSeconds (destroyPieceTime);
 
 			DropPieces ();
@@ -288,11 +296,10 @@ public class Game : MonoBehaviour {
 					board [(int)piece0.coords.x, (int)piece0.coords.y] = piece0;
 					board [(int)piece1.coords.x, (int)piece1.coords.y] = piece1;
 				}
-
-				if (possibleMatches == 0) {
-					OnGameOver ();
-				}
 			}
+		}
+		if (possibleMatches == 0) {
+			OnGameOver ();
 		}
 	}
 
@@ -358,6 +365,7 @@ public class Game : MonoBehaviour {
 
 						Piece piece = pieceObject.GetComponent<Piece> ();
 						piece.coords = oldPiece.coords;
+						piece.isDestroyed = false;
 						board [x, y] = piece;
 
 						Destroy (oldPiece.gameObject);
@@ -368,6 +376,16 @@ public class Game : MonoBehaviour {
 	}
 
 	private void OnGameOver () {
+		scoreText.text = "Game Over!\nScore: " + score + "\nPress R to Restart";
+	}
 
+	private void UpdateScore () {
+		scoreText.text = "Score: " + score;
+	}
+
+	private void ListenForRestart () {
+		if (Input.GetKeyDown (KeyCode.R)) {
+			SceneManager.LoadScene (SceneManager.GetActiveScene ().name, LoadSceneMode.Single);
+		}
 	}
 }
