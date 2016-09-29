@@ -237,7 +237,42 @@ public class Game : MonoBehaviour {
 	}
 
 	private void CheckGameOver () {
+		int possibleMatches = 0;
 
+		for (int y = 0; y < boardHeight; y++) {
+			for (int x = 0; x < boardWidth; x++) {
+				Piece piece0 = board [x, y];
+				Vector2 coord0 = piece0.coords;
+
+				Piece piece1;
+				Vector2 coord1;
+
+				if (x < boardWidth - 1) {
+					piece1 = board [x + 1, y];
+					coord1 = piece1.coords;
+
+					piece0.coords = coord1;
+					piece1.coords = coord0;
+
+					board [(int)piece0.coords.x, (int)piece0.coords.y] = piece0;
+					board [(int)piece1.coords.x, (int)piece1.coords.y] = piece1;
+
+					if (CheckMatch (piece0).Count >= 3 || CheckMatch (piece1).Count >= 3) {
+						possibleMatches++;
+					}
+
+					piece0.coords = coord0;
+					piece1.coords = coord1;
+
+					board [(int)piece0.coords.x, (int)piece0.coords.y] = piece0;
+					board [(int)piece1.coords.x, (int)piece1.coords.y] = piece1;
+				}
+
+				if (y < boardHeight - 1) {
+
+				}
+			}
+		}
 	}
 
 	private void DropPieces () {
